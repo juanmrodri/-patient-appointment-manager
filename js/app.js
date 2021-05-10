@@ -28,6 +28,12 @@ class Citas {
   eliminarCita(id) {
     this.citas = this.citas.filter((cita) => cita.id !== id); // no traemos todos los elementos diferentes al seleccionado, el seleccionado se eleminará obviamente
   }
+
+  editarCita(citaActualizada) {
+    this.citas = this.citas.map(
+      (cita) => (cita.id === citaActualizada.id ? citaActualizada : cita) // ** resumen del choclazo, compara por id, en caso de que sea el mismo, reescribe el objeto, sino, devuelve el viejo, para no perder lo que ya esta ingresado **observar bien este ternario, esto significa que, en caso de que sean iguales, el objeto pasa a ser citaActualizada, en el caso contrario nos quedamos con la cita actual, porque si no hacemos esto, las demas citas se perderian
+    ); // recordar map(), va a recorrer el arreglo, pero map() nos crea un nuevo arreglo, que reescribira el viejo, acá comparamos, cuando estamos en el mismo id(recordamos que tenemos el objeto con id en los dos lados) y la cita es igual al objeto que estamos editando, significa que es el cual se modificará
+  }
 }
 
 class UI {
@@ -61,15 +67,8 @@ class UI {
     this.limpiarHTML(); // limpiamos el array antes de iterar
     // aca podemos hacer el forEach, porque hicimos el destructuring arriba, entonces, ya podemos acceder al arreglo de objetos
     citas.forEach((cita) => {
-      const {
-        mascota,
-        propietario,
-        telefono,
-        fecha,
-        hora,
-        sintomas,
-        id,
-      } = cita;
+      const { mascota, propietario, telefono, fecha, hora, sintomas, id } =
+        cita;
 
       const divCita = document.createElement("div");
       divCita.classList.add("cita", "p-3");
@@ -209,11 +208,12 @@ function nuevaCita(e) {
   }
 
   if (editando) {
-    console.log("modalidad edicion");
+    //console.log("modalidad edicion");
     // mensaje de agregado correctamente
     ui.imprimirAlerta("Se editó correctamente");
 
     // pasar el objeto de la cita a edicion
+    administarCitas.editarCita({ ...citaObj }); // pasamos una copia del objeto
 
     // cambiar el texto del boton de submit, lo volvemos a su estado original
     formulario.querySelector('button[type="submit"]').textContent =
